@@ -18,7 +18,7 @@ module Listen
         @sockets = []
         @server = TCPServer.new(host, port)
       rescue
-        _log :error, "Broadcaster.initialize: #{$!.inspect}:#{$@.join("\n")}"
+        #_log :error, "Broadcaster.initialize: #{$!.inspect}:#{$@.join("\n")}"
         raise
       end
 
@@ -51,9 +51,9 @@ module Listen
           @sockets << socket
         end
       rescue Celluloid::Task::TerminatedError
-        _log :debug, "TCP adapter was terminated: #{$!.inspect}"
+        #_log :debug, "TCP adapter was terminated: #{$!.inspect}"
       rescue
-        _log :error, "Broadcaster.run: #{$!.inspect}:#{$@.join("\n")}"
+        #_log :error, "Broadcaster.run: #{$!.inspect}:#{$@.join("\n")}"
         raise
       end
 
@@ -67,7 +67,7 @@ module Listen
         socket.write(payload)
         true
       rescue IOError, Errno::ECONNRESET, Errno::EPIPE
-        _log :debug, "Broadcaster failed: #{socket.inspect}"
+        #_log :debug, "Broadcaster failed: #{socket.inspect}"
         false
       end
     end

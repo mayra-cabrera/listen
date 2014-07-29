@@ -25,16 +25,16 @@ module Listen
         @buffer = ''
         async.run
       rescue Celluloid::Task::TerminatedError
-        _log :debug, "TCP adapter was terminated: #{$!.inspect}"
+       # _log :debug, "TCP adapter was terminated: #{$!.inspect}"
       rescue Errno::ECONNREFUSED
         sleep 1
         attempts -= 1
-        _log :warn, "TCP.start: #{$!.inspect}"
+        #_log :warn, "TCP.start: #{$!.inspect}"
         retry if retries > 0
-        _log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"
+        #_log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"
         raise
       rescue
-        _log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"
+        #_log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"
         raise
       end
 
@@ -71,7 +71,7 @@ module Listen
       # Handles incoming message by notifying of path changes
       def handle_message(message)
         type, change, dir, path, _ = message.object
-        _log :debug, "TCP message: #{[type, change, dir, path].inspect}"
+       # _log :debug, "TCP message: #{[type, change, dir, path].inspect}"
         _queue_change(type.to_sym, Pathname(dir), path, change: change.to_sym)
       end
 

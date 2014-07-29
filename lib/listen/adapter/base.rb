@@ -28,7 +28,7 @@ module Listen
         defaults = self.class.const_get('DEFAULTS')
         @options = Listen::Options.new(options, defaults)
       rescue
-        _log :error, "adapter config failed: #{$!}:#{$@.join("\n")}"
+        #_log :error, "adapter config failed: #{$!}:#{$@.join("\n")}"
         raise
       end
 
@@ -57,7 +57,7 @@ module Listen
           begin
             _run
           rescue
-            _log :error, "run() in thread failed: #{$!}:#{$@.join("\n")}"
+            #_log :error, "run() in thread failed: #{$!}:#{$@.join("\n")}"
             raise
           end
         end
@@ -84,7 +84,7 @@ module Listen
       end
 
       def self._log(*args)
-        Celluloid.logger.send(*args)
+        #Celluloid.logger.send(*args)
       end
     end
   end

@@ -28,7 +28,7 @@ module Listen
       actions = changes.group_by(&:last).map do |path, action_list|
         [_logical_action_for(path, action_list.map(&:first)), path.to_s]
       end
-      _log :info, "listen: raw changes: #{actions.inspect}"
+      #_log :info, "listen: raw changes: #{actions.inspect}"
 
       { modified: [], added: [], removed: [] }.tap do |squashed|
         actions.each do |type, path|

@@ -244,7 +244,7 @@ module Listen
     end
 
     def _log(type, message)
-      Celluloid.logger.send(type, message)
+      #Celluloid.logger.send(type, message)
     end
 
     def _adapter_class
@@ -270,7 +270,7 @@ module Listen
       block_start = Time.now.to_f
       # TODO: condition not tested, but too complex to test ATM
       block.call(*result) unless result.all?(&:empty?)
-      _log :debug, "Callback took #{Time.now.to_f - block_start} seconds"
+      #_log :debug, "Callback took #{Time.now.to_f - block_start} seconds"
     end
 
     attr_reader :wait_thread
