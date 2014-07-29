@@ -34,8 +34,8 @@ module Listen
       @options = _init_options(args.last.is_a?(Hash) ? args.pop : {})
 
       # Setup logging first
-      Celluloid.logger.level = _debug_level
-      _log :info, "Celluloid loglevel set to: #{Celluloid.logger.level}"
+      Celluloid.logger.level = _debug_level if Celluloid.logger.respond_to?(:level=)
+      #_log :info, "Celluloid loglevel set to: #{Celluloid.logger.level}"
 
       @silencer = Silencer.new
       _reconfigure_silencer({})
