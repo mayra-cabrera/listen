@@ -18,6 +18,9 @@ module Listen
     # TODO: deprecate
     attr_reader :options, :directories
     attr_reader :registry, :supervisor
+
+    # TODO: deprecate
+    # NOTE: these are VERY confusing (broadcast + recipient modes)
     attr_reader :host, :port
 
     # Initializes the directories listener.
@@ -33,9 +36,10 @@ module Listen
     def initialize(*args, &block)
       @options = _init_options(args.last.is_a?(Hash) ? args.pop : {})
 
-      # Setup logging first
-      Celluloid.logger.level = _debug_level if Celluloid.logger.respond_to?(:level=)
-      #_log :info, "Celluloid loglevel set to: #{Celluloid.logger.level}"
+      if Celluloid.logger
+        Celluloid.logger.level = _debug_level
+        _log :info, "Celluloid loglevel set to: #{Celluloid.logger.level}"
+      end
 
       @silencer = Silencer.new
       _reconfigure_silencer({})
@@ -188,10 +192,13 @@ module Listen
     end
 
     def _init_actors
+      options = [mq: self, directories: directories]
+
       @supervisor = Celluloid::SupervisionGroup.run!(registry)
       supervisor.add(Record, as: :record, args: self)
       supervisor.pool(Change, as: :change_pool, args: self)
 
+      # TODO: broadcaster should be a separate plugin
       if @tcp_mode == :broadcaster
         require 'listen/tcp/broadcaster'
         supervisor.add(TCP::Broadcaster, as: :broadcaster, args: [@host, @port])
@@ -200,9 +207,11 @@ module Listen
         # a new instance is spawned by supervisor, but it's 'start' isn't
         # called
         registry[:broadcaster].start
+      elsif @tcp_mode == :recipient
+        # TODO: adapter options should be configured in Listen.{on/to}
+        options.first.merge!(host: @host, port: @port)
       end
 
-      options = [mq: self, directories: directories]
       supervisor.add(_adapter_class, as: :adapter, args: options)
     end
 
@@ -244,7 +253,7 @@ module Listen
     end
 
     def _log(type, message)
-      #Celluloid.logger.send(type, message)
+      Celluloid::Logger.send(type, message)
     end
 
     def _adapter_class

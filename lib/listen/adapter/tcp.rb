@@ -20,7 +20,8 @@ module Listen
 
       # Initializes and starts a Celluloid::IO-powered TCP-recipient
       def start
-        attempts = 3
+        attempts ||= 3
+        _log :info, "TCP: opening socket #{options.host}:#{options.port}"
         @socket = TCPSocket.new(options.host, options.port)
         @buffer = ''
         async.run
@@ -29,9 +30,9 @@ module Listen
       rescue Errno::ECONNREFUSED
         sleep 1
         attempts -= 1
-        #_log :warn, "TCP.start: #{$!.inspect}"
-        retry if retries > 0
-        #_log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"
+        _log :warn, "TCP.start: #{$!.inspect}"
+        retry if attempts > 0
+        _log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"
         raise
       rescue
         #_log :error, "TCP.start: #{$!.inspect}:#{$@.join("\n")}"

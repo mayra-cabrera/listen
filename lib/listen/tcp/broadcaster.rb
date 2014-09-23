@@ -16,6 +16,7 @@ module Listen
       #
       def initialize(host, port)
         @sockets = []
+        _log :debug, "Broadcaster: starting tcp server: #{host}:#{port}"
         @server = TCPServer.new(host, port)
       rescue
         #_log :error, "Broadcaster.initialize: #{$!.inspect}:#{$@.join("\n")}"
@@ -60,7 +61,7 @@ module Listen
       private
 
       def _log(type, message)
-       # Celluloid.logger.send(type, message)
+        Celluloid::Logger.send(type, message)
       end
 
       def _unicast(socket, payload)
